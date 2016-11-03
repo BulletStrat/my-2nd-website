@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mailbox</title>
+    <link href='//fonts.googleapis.com/css?family=Itim&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/base.css">
+</head>
+<body>
+       <nav class="my-navbar navbar-default ">
+            <div class="container-fluid">
+                <a class="navbar-brand" class="active" href="#">Mailbox</a>
+                </a>
+                <div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li ><a href="#">About</a></li>
+                        <li ><a href="#">Contact</a></li>
+                        <li ><a href="#">Sign In</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+       <div class="container">
+            <div class="col-md-12">
+
+
+                <form method='post_new' id ='postForm'>
+                        <h2>Post a quote:</h2>
+                        <textarea id="text" class="form-control" ></textarea>
+                        <br>
+                        <input type='Submit' value='Post' class="btn btn-primary" class="submit"/>
+                        <br>
+                        <hr>
+                    </form>
+                <div id = 'message'></div>
+                <h2>Quotesfeed</h2>
+                <br>
+
+                <div class="col-md-8">
+                <div class="date"></div>
+                <div id="posts"></div>
+                    <br>
+                </div>
+          </div>
+        </div>
+
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+        <!-- ALWAYS add your script just before closing the body tag -->
+        <script type="text/javascript">
+            (function() {
+                // Anonymous function that runs automatically
+                // ALWAYS do this when writing js code
+                var data = {};
+
+                // GETting the data using the ajax method
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/posts/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(json) {
+                        // Function that runs if the ajax request is successful
+                        data = json;
+
+                        // Appending the posts using a for loop
+                        for (var i = 0; i < data.length; i++) {
+                            $('div#posts')
+                                .append('<h3>'+'"'+data[i].status+'"'+'</h3>')
+                                .append('<h4>'+"-"+data[i].user+'</h4>');
+                            $(".date")
+                                .append('<p>'+data[i].published_date+'</p>');
+                        }
+                    },
+                    error: function(req, status, err) {
+                        // Function that runs if the ajax request is unsuccessful
+                        console.log(req, status, err);
+                    }
+                })
+            })();
+
+                 $("#postForm").submit(function(event){
+                console.log($('#text').val());
+            $.ajax({
+                 type:"POST",
+                 url:"http://127.0.0.1:8000/api/posts/create/",
+                 dataType: 'application/json',
+                 data: {
+                            "user": null,
+                            "status": $('#text').val(),
+                            "published_date": null
+                    },
+
+                 success: function(){
+                     $('#message').addClass("alert alert-success");
+                 }
+            });
+            return false;
+       });
+        </script>
+</body>
+</html>
